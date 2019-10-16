@@ -77,7 +77,7 @@ class Dashboard extends Component<{}, DashboardState> {
                         ))}
                     </div>
                 </div>
-                <div style={{backgroundColor: '#e74c3c', flexBasis: '50%'}}>Production</div>
+                <div style={{backgroundColor: '#e74c3c', flexBasis: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>Production</div>
             </div>
         )
     }
