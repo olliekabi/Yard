@@ -27,16 +27,15 @@ class Dashboard extends Component<{}, DashboardState> {
                     .start()
                     .then(function () {console.log("SignalR connected")})
                     .catch(err => console.log('Error while establishing connection :( \n' + err))
-                this.state.hubConnection.on('deployStart', (receivedMessage: string) => {
-                    this.setState({message: receivedMessage})
-                })
-                this.state.hubConnection.on('deployEnd', (receivedMessage: string) => {
+                this.state.hubConnection.on('deployStart', (response: string) => {
+                    let updateEvent = JSON.parse(response);
+                    this.setState({message: `Application: ${updateEvent.Application}, Version: ${updateEvent.Version}, Results: ${updateEvent.ResultsUrl}`})
+                });
+                this.state.hubConnection.on('deployEnd', (response: string) => {
                     this.setState({message: ""})
                 })
             }
         });
-        
-
     }
 
     render() {
