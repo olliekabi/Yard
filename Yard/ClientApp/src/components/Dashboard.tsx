@@ -61,14 +61,23 @@ class Dashboard extends Component<{}, DashboardState> {
     render() {
         const { message } = this.state;
         return(
-            <div style={{display: 'flex', height:'100%'}}>
-                <div style={{backgroundColor: '#2ecc71', flexGrow: 1}}>
-                    Replica 
-                    {this.state.deploys.map((deploy)=> (
-                        <Alert color="primary">{`Application: ${deploy.application}, Version: ${deploy.version}, Results: ${deploy.resultsUrl}`}</Alert>
-                    ))}
+            <div className='full-width' style={{display: 'flex', height:'100%'}}>
+                <div style={{backgroundColor: '#2ecc71', flexBasis: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <div>
+                        Replica
+                    </div>
+                    <div>
+                        
+                    </div>                    
+                    <div>
+                        {this.state.deploys.map((deploy)=> (
+                            <div key={deploy.application + deploy.version}>
+                                <Alert color="primary">{`Deploying: ${deploy.application} - ${deploy.version} - ${deploy.resultsUrl}`}</Alert>
+                            </div>    
+                        ))}
+                    </div>
                 </div>
-                <div style={{backgroundColor: '#e74c3c', flexGrow: 1}}>Production</div>
+                <div style={{backgroundColor: '#e74c3c', flexBasis: '50%'}}>Production</div>
             </div>
         )
     }
