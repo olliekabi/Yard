@@ -2,8 +2,15 @@
 import { Alert } from 'reactstrap';
 import {HubConnection, HubConnectionBuilder} from "@aspnet/signalr";
 
+interface Deploy {
+    application: string,
+    version: string,
+    resultsUrl: string
+}
+
 interface DashboardState {
     hubConnection: HubConnection | null,
+    deploys: Deploy[]
     message: string
 }
 
@@ -11,8 +18,9 @@ class Dashboard extends Component<{}, DashboardState> {
     constructor(props: any) {
         super(props);
         this.state = {
+            hubConnection: null,
+            deploys: [],
             message: "",
-            hubConnection: null
         }
     }
     
@@ -28,11 +36,23 @@ class Dashboard extends Component<{}, DashboardState> {
                     .then(function () {console.log("SignalR connected")})
                     .catch(err => console.log('Error while establishing connection :( \n' + err))
                 this.state.hubConnection.on('deployStart', (response: string) => {
-                    let updateEvent = JSON.parse(response);
-                    this.setState({message: `Application: ${updateEvent.Application}, Version: ${updateEvent.Version}, Results: ${updateEvent.ResultsUrl}`})
+                    const json = JSON.parse(response);
+                    const deploy:Deploy = {
+                        application: json.Application,
+                        version: json.Version,
+                        resultsUrl: json.ResultsUrl
+                    };
+                    this.setState({deploys: this.state.deploys.concat(deploy)})
                 });
                 this.state.hubConnection.on('deployEnd', (response: string) => {
-                    this.setState({message: ""})
+                    const json = JSON.parse(response);
+                    const deploy:Deploy = {
+                        application: json.Application,
+                        version: json.Version,
+                        resultsUrl: json.ResultsUrl
+                    };
+                    const deploys = this.state.deploys.filter(x => x.application !== deploy.application);
+                    this.setState({deploys: deploys})
                 })
             }
         });
@@ -44,7 +64,9 @@ class Dashboard extends Component<{}, DashboardState> {
             <div style={{display: 'flex', height:'100%'}}>
                 <div style={{backgroundColor: '#2ecc71', flexGrow: 1}}>
                     Replica 
-                    <Alert color="primary">{message}</Alert>
+                    {this.state.deploys.map((deploy)=> (
+                        <Alert color="primary">{`Application: ${deploy.application}, Version: ${deploy.version}, Results: ${deploy.resultsUrl}`}</Alert>
+                    ))}
                 </div>
                 <div style={{backgroundColor: '#e74c3c', flexGrow: 1}}>Production</div>
             </div>
