@@ -10,7 +10,7 @@ interface EnvironmentProps {
 
 const Environment = (props: EnvironmentProps) => {
     return (
-        <div style={{backgroundColor: `${props.colour}`, flexBasis: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between'}}>
+        <div style={{backgroundColor: `${props.colour}`, borderStyle: 'solid', borderWidth: '3px', flexBasis: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between'}}>
             <div>
                 {props.name}
             </div>
@@ -18,9 +18,13 @@ const Environment = (props: EnvironmentProps) => {
 
             </div>
             <div>
-                {props.deploys.map((deploy)=> (
+                {props.deploys.map(deploy => (
                     <div key={deploy.application + deploy.version}>
-                        <Alert color="primary">{`Deploying: ${deploy.application} - ${deploy.version} - ${deploy.resultsUrl}`}</Alert>
+                        {deploy.status == 'Failed' ? (
+                            <Alert color="danger">{`Deploy Failed: ${deploy.application} - ${deploy.version} - ${deploy.resultsUrl}`}</Alert>
+                        ) : (
+                            <Alert color="primary">{`Deploying: ${deploy.application} - ${deploy.version} - ${deploy.resultsUrl}`}</Alert>
+                        )}
                     </div>
                 ))}
             </div>

@@ -26,6 +26,15 @@ namespace Yard.Controllers
         }
         
         [HttpPost]
+        [Route("update")]
+        public IActionResult Update(BambooUpdateEvent updateEvent)
+        {
+            var update = JsonConvert.SerializeObject(updateEvent);
+            _deployHubContext.Clients.All.SendAsync("deployUpdate", update);
+            return Ok();
+        }
+        
+        [HttpPost]
         [Route("end")]
         public IActionResult End(BambooUpdateEvent updateEvent)
         {
@@ -40,6 +49,7 @@ namespace Yard.Controllers
         public string Environment { get; set; }
         public string Application { get; set; }
         public string Version { get; set; }
+        public string Status { get; set; }
         public string ResultsUrl { get; set; }
     }
 }
