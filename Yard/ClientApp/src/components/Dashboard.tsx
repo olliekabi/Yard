@@ -1,16 +1,11 @@
 ﻿import React, {Component} from 'react';
-import { Alert } from 'reactstrap';
 import {HubConnection, HubConnectionBuilder} from "@aspnet/signalr";
-
-interface Deploy {
-    application: string,
-    version: string,
-    resultsUrl: string
-}
+import Environment from "./Environment";
+import Deploy from "./Deploy";
 
 interface DashboardState {
     hubConnection: HubConnection | null,
-    deploys: Deploy[]
+    deploys: Deploy[],
     message: string
 }
 
@@ -62,22 +57,8 @@ class Dashboard extends Component<{}, DashboardState> {
         const { message } = this.state;
         return(
             <div className='full-width' style={{display: 'flex', height:'100%'}}>
-                <div style={{backgroundColor: '#2ecc71', flexBasis: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between'}}>
-                    <div>
-                        Replica
-                    </div>
-                    <div>
-                        
-                    </div>                    
-                    <div>
-                        {this.state.deploys.map((deploy)=> (
-                            <div key={deploy.application + deploy.version}>
-                                <Alert color="primary">{`Deploying: ${deploy.application} - ${deploy.version} - ${deploy.resultsUrl}`}</Alert>
-                            </div>    
-                        ))}
-                    </div>
-                </div>
-                <div style={{backgroundColor: '#e74c3c', flexBasis: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>Production</div>
+                <Environment name="Replica" colour="#2ecc71" deploys={this.state.deploys}/>
+                <Environment name="Production" colour="#e74c3c" deploys={[]}/>
             </div>
         )
     }
