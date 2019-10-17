@@ -33,6 +33,7 @@ class Dashboard extends Component<{}, DashboardState> {
                 this.state.hubConnection.on('deployStart', (response: string) => {
                     const json = JSON.parse(response);
                     const deploy:Deploy = {
+                        environment: json.Environment,
                         application: json.Application,
                         version: json.Version,
                         resultsUrl: json.ResultsUrl
@@ -42,11 +43,12 @@ class Dashboard extends Component<{}, DashboardState> {
                 this.state.hubConnection.on('deployEnd', (response: string) => {
                     const json = JSON.parse(response);
                     const deploy:Deploy = {
+                        environment: json.Environment,
                         application: json.Application,
                         version: json.Version,
                         resultsUrl: json.ResultsUrl
                     };
-                    const deploys = this.state.deploys.filter(x => x.application !== deploy.application);
+                    const deploys = this.state.deploys.filter(x => !(x.environment == deploy.environment && x.application == deploy.application));
                     this.setState({deploys: deploys})
                 })
             }
@@ -57,8 +59,8 @@ class Dashboard extends Component<{}, DashboardState> {
         const { message } = this.state;
         return(
             <div className='full-width' style={{display: 'flex', height:'100%'}}>
-                <Environment name="Replica" colour="#2ecc71" deploys={this.state.deploys}/>
-                <Environment name="Production" colour="#e74c3c" deploys={[]}/>
+                <Environment name="Replica" colour="#2ecc71" deploys={this.state.deploys.filter(x => x.environment == "Replica")}/>
+                <Environment name="Production" colour="#e74c3c" deploys={this.state.deploys.filter(x => x.environment == "Production")}/>
             </div>
         )
     }
