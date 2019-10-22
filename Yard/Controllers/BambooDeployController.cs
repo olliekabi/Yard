@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using Yard.Hubs;
+using Yard.Models;
+using Yard.Services;
 
 namespace Yard.Controllers
 {
@@ -10,10 +12,12 @@ namespace Yard.Controllers
     public class BambooDeployController : ControllerBase
     {
         private readonly IHubContext<DeployHub> _deployHubContext;
+        private readonly IGitHubService _gitHubService;
 
-        public BambooDeployController(IHubContext<DeployHub> deployHubContext)
+        public BambooDeployController(IHubContext<DeployHub> deployHubContext, IGitHubService gitHubService)
         {
             _deployHubContext = deployHubContext;
+            _gitHubService = gitHubService;
         }
 
         [HttpPost]
@@ -38,18 +42,13 @@ namespace Yard.Controllers
         [Route("end")]
         public IActionResult End(BambooUpdateEvent updateEvent)
         {
-            var update = JsonConvert.SerializeObject(updateEvent);
-            _deployHubContext.Clients.All.SendAsync("deployEnd", update);
+            var jsonUpdate = JsonConvert.SerializeObject(updateEvent);
+            _deployHubContext.Clients.All.SendAsync("deployEnd", jsonUpdate);
+
+            var pullRequest = _gitHubService.GetPullRequestForRelease(updateEvent.Application, updateEvent.Revision);
+            var jsonPullRequest = JsonConvert.SerializeObject(pullRequest);
+            _deployHubContext.Clients.All.SendAsync("addPullRequest", jsonPullRequest);
             return Ok();
         }
-    }
-
-    public class BambooUpdateEvent
-    {
-        public string Environment { get; set; }
-        public string Application { get; set; }
-        public string Version { get; set; }
-        public string Status { get; set; }
-        public string ResultsUrl { get; set; }
     }
 }

@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Octokit;
 using Yard.Hubs;
+using Yard.Services;
 
 namespace Yard
 {
@@ -27,8 +28,13 @@ namespace Yard
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
             
             services.AddSignalR();
-        }
 
+            services.AddTransient<IGitHubService, GitHubService>();
+            services.AddTransient<IGitHubClient, GitHubClient>();
+
+            services.AddHttpClient<IGitHubClient, GitHubClient>();
+        }
+        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
