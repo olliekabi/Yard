@@ -78,7 +78,7 @@ class Dashboard extends Component<{}, DashboardState> {
                     const json = JSON.parse(response);
                     const deploy:Deploy = this.mapDeploy(json);
                     
-                    const deploys = this.state.deploys.filter(x => !(x.environment == deploy.environment && x.application == deploy.application)).;
+                    const deploys = this.state.deploys.filter(x => !(x.environment == deploy.environment && x.application == deploy.application));
                     const pullRequests = this.state.pullRequests.concat(deploy.pullRequests);
                     this.setState({deploys: deploys, pullRequests: pullRequests})
                 });
@@ -88,8 +88,6 @@ class Dashboard extends Component<{}, DashboardState> {
 
     render() {
         const { deploys, pullRequests } = this.state;
-        const replicaDeploys = deploys.filter(x => x.environment == "Replica");
-        const productionDeploys = deploys.filter(x => x.environment == "Production");
         return(
             <div className='full-width' style={{display: 'flex', height:'100%'}}>
                 <Environment name="Replica" colour="#2ecc71" deploys={deploys.filter(x => x.environment == "Replica")} pullRequests={pullRequests}/>
