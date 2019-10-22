@@ -1,11 +1,13 @@
 ﻿import React from "react";
 import {Alert} from "reactstrap";
-import Deploy from "./Deploy";
+import {Deploy} from "./Deploy";
+import {PullRequest} from "./PullRequest";
 
 interface EnvironmentProps {
     name: string,
     colour: string,
-    deploys: Deploy[]
+    deploys: Deploy[],
+    pullRequests: PullRequest[]
 }
 
 const Environment = (props: EnvironmentProps) => {
@@ -15,7 +17,9 @@ const Environment = (props: EnvironmentProps) => {
                 {props.name}
             </div>
             <div>
-
+                {props.pullRequests.map(pullRequest => (
+                    <Alert>{pullRequest.id} - {pullRequest.description}</Alert>
+                ))}
             </div>
             <div>
                 {props.deploys.map(deploy => (
