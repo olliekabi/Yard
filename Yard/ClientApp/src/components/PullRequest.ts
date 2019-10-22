@@ -1,11 +1,13 @@
 ﻿export interface PullRequest {
-    id: string,
+    number: string,
+    application: string,
     description: string,
     url: string
 }
 
 export interface PullRequestJSON {
-    Id: string,
+    Number: string,
+    Application: string,
     Description: string,
     Url: string
 }

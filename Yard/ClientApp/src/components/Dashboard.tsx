@@ -28,7 +28,8 @@ class Dashboard extends Component<{}, DashboardState> {
             previousBuildRevision: json.PreviousBuildRevision,
             pullRequests: json.PullRequests.map((pullRequest: PullRequestJSON): PullRequest => {
                 return {
-                    id: pullRequest.Id,
+                    number: pullRequest.Number,
+                    application: pullRequest.Application,
                     description: pullRequest.Description,
                     url: pullRequest.Url
                 }

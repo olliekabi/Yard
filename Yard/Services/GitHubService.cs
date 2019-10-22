@@ -16,7 +16,7 @@ namespace Yard.Services
     public class GitHubService : IGitHubService
     {
         private readonly IGitHubClient _gitHubClient;
-        private readonly int _membersRepositoryId = 67412310;
+        private readonly Dictionary<string, int> _applicationIds = new Dictionary<string, int> { {"Members", 67412310}, {"Customers", 67585340}};
 
         public GitHubService()
         {
@@ -25,7 +25,8 @@ namespace Yard.Services
         }
         public async Task<List<PullRequest>> GetPullRequestsForRelease(string application, string buildRevision, string previousBuildRevision)
         {
-            var compareResult = await _gitHubClient.Repository.Commit.Compare(_membersRepositoryId, previousBuildRevision, buildRevision);
+            var applicationId = _applicationIds[application];
+            var compareResult = await _gitHubClient.Repository.Commit.Compare(applicationId, previousBuildRevision, buildRevision);
             var commits = new List<GitHubCommit>(compareResult.Commits) {compareResult.BaseCommit};
 
             var pullRequests = new List<PullRequest>();
@@ -39,17 +40,18 @@ namespace Yard.Services
                 var pullRequestIdString = splitMessage[3].Substring(1);
                 var pullRequestId = int.Parse(pullRequestIdString);
 
-                var pullRequest = await _gitHubClient.PullRequest.Get(_membersRepositoryId, pullRequestId);
+                var pullRequest = await _gitHubClient.PullRequest.Get(applicationId, pullRequestId);
                 
                 pullRequests.Add(new PullRequest
                 {
-                    Id = pullRequest.Id,
+                    Number = pullRequest.Number,
                     Description = pullRequest.Title,
+                    Application = application,
                     Url = pullRequest.Url
                 });
             }
 
-            var orderedList = pullRequests.OrderBy(pr => pr.Id).ToList();
+            var orderedList = pullRequests.OrderBy(pr => pr.Number).ToList();
             return orderedList;
         }
     }
