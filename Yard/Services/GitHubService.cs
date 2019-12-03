@@ -20,7 +20,7 @@ namespace Yard.Services
 
         public GitHubService()
         {
-            var tokenAuth = new Credentials("47e3903d5a00a7fdf749c83b27fb10b219fb781b");
+            var tokenAuth = new Credentials("placeholder");
             _gitHubClient = new GitHubClient(new ProductHeaderValue("yard"), new InMemoryCredentialStore(tokenAuth));
         }
         public async Task<List<PullRequest>> GetPullRequestsForRelease(string application, string buildRevision, string previousBuildRevision)
